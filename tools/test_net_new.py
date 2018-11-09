@@ -524,7 +524,13 @@ def parse_args():
                         action='store_true')
     parser.add_argument('--net', dest='demo_net', help='Network to use [rrpn]',
                         choices=['rrpn', 'vgg16', 'zf'], default='rrpn')
-
+    parser.add_argument('--imdb', dest='imdb_name', 
+                        help='name of input image dataset', 
+                        default='icdar_2015_test')
+    parser.add_argument('--caffemodel', dest='model_name',
+                        help='name of model used to detect',
+                        default='vgg16_faster_rcnn_iter_100000.caffemodel')
+    
     args = parser.parse_args()
 
     return args
@@ -552,13 +558,13 @@ if __name__ == '__main__':
     
 
     print "prototxt",prototxt
-    caffemodel = os.path.join(cfg.DATA_DIR, 'faster_rcnn_models',
-                              'vgg16_faster_rcnn.caffemodel')
+    snapshot_dir = './snapshot'
+    caffemodel = os.path.join(snapshot_dir, args.model_name)
 
-    print "caffemodel",caffemodel
-    if not os.path.isfile(caffemodel):
-        raise IOError(('{:s} not found.\nDid you run ./data/script/'
-                       'fetch_faster_rcnn_models.sh?').format(caffemodel))
+#     print "caffemodel: ", caffemodel
+#     if not os.path.isfile(caffemodel):
+#         raise IOError(('{:s} not found.\nDid you run ./data/script/'
+#                        'fetch_faster_rcnn_models.sh?').format(caffemodel))
 
     if args.cpu_mode:
         caffe.set_mode_cpu()
@@ -575,32 +581,31 @@ if __name__ == '__main__':
     for i in xrange(2):
         _, _= r_im_detect(net, im)
 
-    im_names = []
-    gt_boxes = []	
+#     im_names = []
+#     gt_boxes = []	
     
-#     demo_dir = './data/demo'
-#     for img in os.listdir(demo_dir):
-# 	# im_names.append(rdb['image'])
-#         # gt_boxes.append(rdb['boxes'])
-#         im_names.append(os.path.join(demo_dir, img))
+#     test_dir = './data/dataset/ICDAR_2015/ch4_test_images'
+#     for img in os.listdir(test_dir):
+#         # ignore files created by jupyter
+#         if img[0] == '.':
+#             continue
+#         im_names.append(os.path.join(test_dir, img))
 #         gt_boxes.append([0, 0, 0, 0, 0])
-    test_dir = './data/dataset/ICDAR_2015/ch4_test_images'
-    for img in os.listdir(test_dir):
-	# im_names.append(rdb['image'])
-        # gt_boxes.append(rdb['boxes'])
-        # ignore files created by jupyter
-        if img[0] == '.':
-            continue
-        im_names.append(os.path.join(test_dir, img))
-        gt_boxes.append([0, 0, 0, 0, 0])
-        
+    roidb = get_rroidb(args.imdb_name)    
+    
     # The detection results will save in cood_dir in txt
     cood_dir = "./data/dataset/ICDAR_2015/results_txt"
 
 #     for im_idx in range(len(im_names)):
-    for im_idx in range(min(10, len(im_names))):
+    for im_idx in range(min(10, len(roidb))):
+        im_path = roidb[im_idx]['image']
+        im_name = im_path.split('/')[-1].split('.')[0]
+        gt_boxes = roidb[im_idx]['boxes']
+        ori_gt_boxes = roidb[im_idx]['ori_boxes']
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        print 'detect for {}/{}'.format(cood_dir, im_names[im_idx])
+        print 'detect for {}'.format(im_name)
 #         vis_image(im_names[im_idx], demo(net, im_names[im_idx], gt_boxes[im_idx], cood_dir))
-        vis_detections(im_names[im_idx], demo(net, im_names[im_idx], gt_boxes[im_idx], cood_dir))
+        vis_detections(im_path, 
+                        demo(net, im_path, gt_boxes, cood_dir, conf=0.5),
+                        ori_gt_boxes)
     

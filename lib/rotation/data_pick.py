@@ -226,14 +226,17 @@ def vis_image(image_path, boxes):
 
 	# cv2.imwrite("a.jpg", img)
 
-def vis_detections(image_path, boxes):
+def vis_detections(image_path, boxes, gt_boxes):
 	"""Visual debugging of detections."""
 	import matplotlib.pyplot as plt
 	im = cv2.imread(image_path)
 	plt.cla()
-	plt.imshow(im)
+	scale_ratio = 1.5
+	plt.figure(figsize=(1280/100*scale_ratio,720/100*scale_ratio))
+	plt.imshow(im, shape=(1280*scale_ratio,720*scale_ratio))
 	print 'predict bbox num: {}'.format(len(boxes))
-	showed_bbox_score = []
+	scores = []
+    # draw predict bounding box
 	for idx in xrange(len(boxes)):
 		cx,cy,h,w,angle, score = boxes[idx]
 		lt = [cx - w/2, cy - h/2,1]
@@ -245,6 +248,7 @@ def vis_detections(image_path, boxes):
 		pts.append(rt)
 		pts.append(rb)
 		pts.append(lb)
+		scores.append(score)
 
 		angle = -angle
 
@@ -259,18 +263,32 @@ def vis_detections(image_path, boxes):
 
 		rotated_pts = np.dot(np.array(pts), rotation_matrix)
 
-		showed_bbox_score.append(score)
-		plt.gca().add_patch(plt.Polygon(rotated_pts[:,:2], closed=True, color='green', fill=False, linewidth=1))
+		plt.gca().add_patch(plt.Polygon(rotated_pts[:,:2], closed=True, color='green', fill=False, linewidth=2))
 
+    # draw ground truth bounding box
+	for idx in xrange(len(gt_boxes)):
+		x1,y1,x2,y2,x3,y3,x4,y4 = gt_boxes[idx]
+		lt = [x1, y1]
+		rt = [x2, y2]
+		rb = [x3, y3]
+		lb = [x4, y4]
+		pts = []
+		pts.append(lt)
+		pts.append(rt)
+		pts.append(rb)
+		pts.append(lb)
 
-	if len(showed_bbox_score) > 0:
+		plt.gca().add_patch(plt.Polygon(pts, closed=True, color='red', fill=False, linewidth=1))    
+    
+	if len(boxes) > 0 or len(gt_boxes):
 		im_name = image_path.split('/')[-1].split('.')[0]
+		plt.axis('off')
 		path = os.path.join(
 					cfg.DATA_DIR, 
 					'dataset',
 					'ICDAR_2015',
 					'results',
-					"{}_{:.4f}_{:.4f}.jpg".format(im_name, max(showed_bbox_score), min(showed_bbox_score)))
+					"{}_{:.4f}_{:.4f}.jpg".format(im_name, max(scores), min(scores)))
 		plt.savefig(path)
     
 def vis_image_ICDAR(image_path, boxes):
