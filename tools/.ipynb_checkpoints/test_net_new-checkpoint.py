@@ -586,7 +586,7 @@ if __name__ == '__main__':
         gt_boxes.append([0, 0, 0, 0, 0])
         
     # The detection results will save in cood_dir in txt
-    cood_dir = "./result"
+    cood_dir = "./data/dataset/ICDAR_2015/results_txt"
 
     for im_idx in range(len(im_names)):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
