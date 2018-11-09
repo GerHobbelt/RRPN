@@ -578,19 +578,29 @@ if __name__ == '__main__':
     im_names = []
     gt_boxes = []	
     
-    demo_dir = './data/demo'
-    for img in os.listdir(demo_dir):
+#     demo_dir = './data/demo'
+#     for img in os.listdir(demo_dir):
+# 	# im_names.append(rdb['image'])
+#         # gt_boxes.append(rdb['boxes'])
+#         im_names.append(os.path.join(demo_dir, img))
+#         gt_boxes.append([0, 0, 0, 0, 0])
+    test_dir = './data/dataset/ICDAR_2015/ch4_test_images'
+    for img in os.listdir(test_dir):
 	# im_names.append(rdb['image'])
         # gt_boxes.append(rdb['boxes'])
-        im_names.append(os.path.join(demo_dir, img))
+        # ignore files created by jupyter
+        if img[0] == '.':
+            continue
+        im_names.append(os.path.join(test_dir, img))
         gt_boxes.append([0, 0, 0, 0, 0])
         
     # The detection results will save in cood_dir in txt
     cood_dir = "./data/dataset/ICDAR_2015/results_txt"
 
-    for im_idx in range(len(im_names)):
+#     for im_idx in range(len(im_names)):
+    for im_idx in range(min(10, len(im_names))):
         print '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
-        print 'Demo for data/demo/{}'.format(im_names[im_idx])
+        print 'detect for {}/{}'.format(cood_dir, im_names[im_idx])
 #         vis_image(im_names[im_idx], demo(net, im_names[im_idx], gt_boxes[im_idx], cood_dir))
         vis_detections(im_names[im_idx], demo(net, im_names[im_idx], gt_boxes[im_idx], cood_dir))
     
