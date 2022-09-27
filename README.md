@@ -116,10 +116,16 @@ python tools/train_net.py --config-file=configs/Mask_RRPN/e2e_rrpn_R_50_C4_1x_LS
 1.模型训练预处理部分都在这个文件中maskrcnn_benchmark/data/transforms/build.py
    arpn/rrpn/rpn三种结构定义了各自的预处理类
    其中，RandomCrop、RandomRotation可能导致rpn_loss出现Nan，如果出现Nan,注释这两个预处理类
-   debug发现会导致训练模型时输入到模型的target为Nan，最终导致rpn loss计算时出现loss，该问题可能由问题2一起导致loss出现Nan
-2.模型训练rrpn结构代码存在bug，位置在maskrcnn_benchmark/modeling/rrpn/loss.py中的64行：
-     labels_per_image[~anchors_per_image.get_field("visibility")] = -1
-     该行代码存在bug，导致positive class（前景类）类别数为0，最终导致梯度爆炸，loss为Nan，如果出现，注释掉改行代码
+   debug发现会导致训练模型时输入到模型的target为Nan，最终导致rpn loss计算时出现loss，该问题可能由问题2一起导致loss出现Nan  
+2.模型训练rrpn结构代码存在bug，位置在maskrcnn_benchmark/modeling/rrpn/loss.py中的64行：   
+     labels_per_image[~anchors_per_image.get_field("visibility")] = -1  
+     该行代码存在bug，导致positive classmaskrcnn_benchmark/modeling/rrpn/loss.py（前景类）类别数为0，最终导致梯度爆炸，loss为Nan，如果出现，注释掉改行代码  
+3. 模型训练arpn结构代码存在bug，位置在maskrcnn_benchmark/modeling/arpn/loss.py中的88行：  
+     right_bound = box_areas < size_range[1]  
+     该行对box的面积进行过滤，阈值太小会将图片的所有box全部过滤掉，导致loss出现Nan  
+     解决方法：修改该文件的213行，调大面积阈值  
+     size_range = [0, self.size_stack[-3] ** 2]  
+4. 学习率过大loss也会出现Nan，一般最大为0.0001
 
 Train a spotter（端到端） (Used in RRPN++ report and we strongly recommand to use) of RRPN++
 
