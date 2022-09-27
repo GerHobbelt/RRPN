@@ -210,7 +210,8 @@ class RPNLossComputation(object):
             # label: (N, grid_size, 1)
             # regression_target: (N, grid_size, 5)
             if cnt == 0:
-                size_range = [0, self.size_stack[cnt] ** 2]
+                #size_range = [0, self.size_stack[cnt] ** 2]
+                size_range = [0, self.size_stack[-3] ** 2]
             elif cnt < len(self.size_stack):
                 size_range = [self.size_stack[cnt - 1] ** 2, self.size_stack[cnt] ** 2]
             else:
