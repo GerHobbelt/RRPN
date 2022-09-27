@@ -61,7 +61,9 @@ class RPNLossComputation(object):
             labels_per_image = matched_idxs >= 0
             labels_per_image = labels_per_image.to(dtype=torch.float32)
             # discard anchors that go out of the boundaries of the image
-            labels_per_image[~anchors_per_image.get_field("visibility")] = -1
+            #################this line leads to no positive class##################
+            #labels_per_image[~anchors_per_image.get_field("visibility")] = -1
+            #######################################################################
 
             # discard indices that are between thresholds
             inds_to_discard = matched_idxs == Matcher.BETWEEN_THRESHOLDS
