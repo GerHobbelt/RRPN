@@ -120,12 +120,15 @@ python tools/train_net.py --config-file=configs/Mask_RRPN/e2e_rrpn_R_50_C4_1x_LS
 2.模型训练rrpn结构代码存在bug，位置在maskrcnn_benchmark/modeling/rrpn/loss.py中的64行：   
      labels_per_image[~anchors_per_image.get_field("visibility")] = -1  
      该行代码存在bug，导致positive classmaskrcnn_benchmark/modeling/rrpn/loss.py（前景类）类别数为0，最终导致梯度爆炸，loss为Nan，如果出现，注释掉改行代码  
-3. 模型训练arpn结构代码存在bug，位置在maskrcnn_benchmark/modeling/arpn/loss.py中的88行：  
+3. 模型训练arpn结构代码可能存在bug，位置在maskrcnn_benchmark/modeling/arpn/loss.py中的88行：  
      right_bound = box_areas < size_range[1]  
-     该行对box的面积进行过滤，阈值太小会将图片的所有box全部过滤掉，导致loss出现Nan  
+     该行对box的面积进行过滤，阈值太小会将图片的所有box全部过滤掉，可能导致loss出现Nan （待确认） 
      解决方法：修改该文件的213行，调大面积阈值  
      size_range = [0, self.size_stack[-3] ** 2]  
-4. 学习率过大loss也会出现Nan，一般最大为0.0001
+     
+4. 学习率过大loss也会出现Nan，一般最大为0.0001  
+5. 数据集越界，肯定会导致loss出现Nan  
+    训练时使用了天池icpr数据集，训练一段时间后就出现nan，即使lr很小也会出现nan，很难排查
 
 Train a spotter（端到端） (Used in RRPN++ report and we strongly recommand to use) of RRPN++
 
