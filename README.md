@@ -4,7 +4,9 @@
 
 https://arxiv.org/abs/1703.01086
 
+
 ### News
+
 We update RRPN in pytorch 1.0! View **https://github.com/mjq11302010044/RRPN_plusplus** for more details. Text Spotter f-measure results are 89.5 % in IC15, 92.0\% in IC13. The testing speed can reach 13.3 fps in IC13 with input shorter size of 640px !
 
 
@@ -12,7 +14,9 @@ We update RRPN in pytorch 1.0! View **https://github.com/mjq11302010044/RRPN_plu
 
 RRPN is released under the MIT License (refer to the LICENSE file for details). This project is for research purpose only, further use for RRPN should contact authors.
 
+
 ### Citing RRPN
+
 If you find RRPN useful in your research, please consider citing:
 
     @article{Jianqi17RRPN,
@@ -25,12 +29,15 @@ If you find RRPN useful in your research, please consider citing:
         year={2018}
     }
 
+
 ### Contents
+
 1. [Requirements: software](#requirements-software)
 2. [Requirements: hardware](#requirements-hardware)
 3. [Basic installation](#installation-sufficient-for-the-demo)
 4. [Demo](#demo)
 5. [Beyond the demo: training and testing](#beyond-the-demo-installation-for-training-and-testing-models)
+
 
 ### Requirements: software
 
@@ -47,11 +54,14 @@ If you find RRPN useful in your research, please consider citing:
   You can download my [Makefile.config](http://www.cs.berkeley.edu/~rbg/fast-rcnn-data/Makefile.config) for reference.
 2. Python packages you might not have: `cython`, `python-opencv`, `easydict`
 
+
 ### Requirements: hardware
 
 1. For training the end-to-end version of RRPN with VGG16, 4~5G of GPU memory is sufficient (using CUDNN)
 
+
 ### Installation (sufficient for the demo)
+
 1. Clone the RRPN repository
   ```Shell
   # git clone https://github.com/mjq11302010044/RRPN.git
@@ -85,6 +95,7 @@ If you find RRPN useful in your research, please consider citing:
 
    Then move the model into `$RRPN_ROOT/data/faster_rcnn_models`.
 
+
 ### Demo
 
 *After successfully completing [basic installation](#installation-sufficient-for-the-demo)*, you'll be ready to run the demo.
@@ -95,6 +106,7 @@ cd $RRPN_ROOT
 python ./tools/rotation_demo.py
 ```
 The txt results will be saved in `$RRPN_ROOT/result`
+
 
 ### Beyond the demo: installation for training and testing models
 
@@ -120,6 +132,7 @@ You can use the function `get_rroidb()` in `$RRPN_ROOT/lib/rotation/data_extract
 ``` In $RRPN_ROOT/tools/train_net.py
 116: roidb = get_rroidb("train") # change to your data manage function
 ```
+
 
 ### Download pre-trained ImageNet models
 
